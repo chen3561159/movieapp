@@ -23,6 +23,10 @@ class User(db.Model):
         'Comment',
         backref='user'
     )
+    moviecols=db.relationship(
+        'Moviecol',
+        backref='user'
+    )
 
 
     def __repr__(self):
@@ -71,6 +75,10 @@ class Movie(db.Model):
         'Comment',
         backref='movie'
     )
+    moviecols=db.relationship(
+        'Moviecol',
+        backref='movie'
+    )
 
     def __repr__(self):
         return  "<Movie %s>"%self.title
@@ -85,7 +93,7 @@ class Preview(db.Model):
 
     def __repr__(self):
         return "<Preview %s>"%self.title
-
+#电影评论
 class Comment(db.Model):
     __tablename__ = "preview"
     id=db.Column(db.Integer,primary_key=True)
@@ -97,10 +105,57 @@ class Comment(db.Model):
     def __repr__(self):
         return "<Comment %s>"%self.Comment[0:20]
 
-
+#电影收藏
 class Moviecol(db.Model):
     __tablename__="moviecol"
     id=db.Column(db.Integer,primary_key=True)#编号
     content=db.Column(db.Text)#内容
     movie_id=db.Column(db.Integer,db.ForeignKey('movie.id'))#
+    user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
+    addtime=db.Column(db.DateTime,index=True,default=datetime.now)
+
+    def __repr__(self):
+        return  "<moviecol %s>" %self.id
+
+
+auths=db.Table('role_auth',
+    db.Column('auth_id',db.Integer,db.ForeignKey('auth.id')),
+    db.Column('role_id',db.Integer,db.ForeignKey('role.id'))
+)
+
+
+class Auth(db.Model):
+    __tablename__='auth'
+    id=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String(100),unique=True)
+    url=db.Column(db.String(255),unique=True)
+    addtime=db.Column(db.DateTime,index=True,default=datetime.now)
+
+    def __repr__(self):
+        return  "<auth %s>"%self.name
+
+class Role(db.Model):
+    __tablename__="role"
+    id=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String(100),unique=True)
+    auths=db.Column(db.String(600))
+    addtime=db.Column(db.DateTime,index=True,default=datetime.now)
+    auths=db.relationship(
+        'Auth',
+        secondary=auths,
+        backref=db.backref('roles',lazy='dynamic')
+    )
+    def __repr__(self):
+        return  "<Role %s>"%self.name
+
+
+class Admin(db.Model):
+    __tablename__='admin'
+    id=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String(100),unique=True)#管理员帐号
+    pwd=db.Column(db.String(100))#管理员密码
+    is_super=db.Column(db.SmallInteger)#是否为超级管理员
+    role_id=db.Column(db.Integer,db.ForeignKey('role.id'))
+    addtime=db.Column(db.DateTime,index=True,default=datetime.now)
+
 
