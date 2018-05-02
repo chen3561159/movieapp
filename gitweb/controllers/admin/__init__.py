@@ -6,5 +6,7 @@ admin=Blueprint(
     'admin',
     __name__,
     template_folder=os.path.join(pardir,'..','templates','admin'),
-    url_prefix="/admin"
+    static_folder=os.path.join(pardir,'..','static'),
+
 )
+import gitweb.controllers.home.views
