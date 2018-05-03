@@ -95,7 +95,7 @@ class Preview(db.Model):
         return "<Preview %s>"%self.title
 #电影评论
 class Comment(db.Model):
-    __tablename__ = "preview"
+    __tablename__ = "comment"
     id=db.Column(db.Integer,primary_key=True)
     content=db.Column(db.Text)
     movie_id=db.Column(db.Integer,db.ForeignKey('movie.id'))

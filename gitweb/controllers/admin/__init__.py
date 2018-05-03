@@ -5,8 +5,6 @@ import os
 admin=Blueprint(
     'admin',
     __name__,
-    template_folder=os.path.join(pardir,'..','templates','admin'),
-    static_folder=os.path.join(pardir,'..','static'),
-
+    template_folder=os.path.join(os.getcwd(), 'gitweb', 'templates', 'admin')
 )
 import gitweb.controllers.home.views
