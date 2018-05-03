@@ -145,6 +145,10 @@ class Role(db.Model):
         secondary=auths,
         backref=db.backref('roles',lazy='dynamic')
     )
+    admins=db.relationship(
+        'Admin',
+        backref='role'
+    )
     def __repr__(self):
         return  "<Role %s>"%self.name
 
@@ -157,5 +161,33 @@ class Admin(db.Model):
     is_super=db.Column(db.SmallInteger)#是否为超级管理员
     role_id=db.Column(db.Integer,db.ForeignKey('role.id'))
     addtime=db.Column(db.DateTime,index=True,default=datetime.now)
+    adminlogs=db.relationship(
+        'Adminlog',
+        backref='admin'
+    )#该管理元的所有登陆日志
+    oplogs=db.relationship(
+        'Oplog',
+        backref='admin'
+    )
+    def __repr__(self):
+        return  "<admin %s>"%self.name
 
+class Adminlog(db.Model):
+    __tablename__="adminlog"
+    id=db.Column(db.Integer,primary_key=True)
+    admin_id=db.Column(db.Integer,db.ForeignKey('admin.id'))#所属管理员
+    ip=db.Column(db.String(100))#登陆IP
+    addtime=db.Column(db.DateTime,index=True,default=datetime.now)#添加时间
+
+    def __repr__(self):
+        return "<adminlog %s>"%self.id
+
+#操作日志
+class Oplog(db.Model):
+    __tablename__='oplog'
+    id=db.Column(db.Integer,primary_key=True)#编号
+    admin_id=db.Column(db.Integer,db.ForeignKey('admin.id'))
+    ip=db.Column(db.String(100))#登陆IP
+    reason=db.Column(db.String(600))#操作原因
+    addtime=db.Column(db.DateTime,index=True,default=datetime.now)
 
